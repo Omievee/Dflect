@@ -19,6 +19,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
+import com.firebase.ui.auth.ui.User;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,12 +31,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 
 import io.github.omievee.dlfect_alpha.UsersandRatings.RatingActions;
 import io.github.omievee.dlfect_alpha.UsersandRatings.Rating_ViewHolder;
 import io.github.omievee.dlfect_alpha.UsersandRatings.Users;
 
+import static android.R.attr.borderlessButtonStyle;
 import static android.R.attr.data;
 import static android.R.attr.mode;
 
@@ -93,34 +98,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mTexty.setText("Rating is:" + mRating.getRating());
-
                 saveRatingsToFirebase("Rating is:" + mRating.getRating());
+
                 saveUsersToFirebase();
 //                 mRef.push().setValue(new RatingActions(mCurrentUserID, mRating.getRating()));
 //                mTexty.setText("You've been rated: " + mRating.getRating());
             }
         });
+        //Perform Search on FB & bring back matching email.
+        searchFB();
 
-        mAdapt = new FirebaseRecyclerAdapter<Users, Rating_ViewHolder>(Users.class, android.R.layout.simple_list_item_1, Rating_ViewHolder.class, mRef) {
-            @Override
-            protected void populateViewHolder(Rating_ViewHolder viewHolder, Users model, int position) {
-                searchFB();
-            }
-        };
-
-        mRV.setAdapter(mAdapt);
     }
-
-
-
-
 
     //Add rating to FDB
     public void saveRatingsToFirebase(String rating) {
         mRatingGiven.push().setValue(rating);
     }
 
-    //Sign in  to FB
+    //Sign in  to GoogleAccount
     public void signIN() {
         startActivityForResult(
                 // Get an instance of AuthUI based on the default app
@@ -130,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         .setProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
                         .build(), USERSIGNIN);
     }
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -192,8 +188,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     public void searchFB() {
         mSEARCH.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -206,16 +200,29 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                final FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference searchUsers = database.getReference("users");
                 searchUsers.orderByChild("mEmail").equalTo(newText).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
 
-                            Toast.makeText(MainActivity.this, "Found", Toast.LENGTH_SHORT).show();
+                            boolean exit = true;
+                            int counter = 1;
+                            String key = dataSnapshot.getValue().toString();
+                            while (exit) {
+                                if (key.charAt(counter) == '=')
+                                    exit = false;
+                                else
+                                    counter++;
+                            }
+                            key = key.substring(1, counter);
+                            System.out.println(key);
+                            mTexty.setText(dataSnapshot.child(key).getValue(Users.class).getmEmail());
+
                         } else {
-//                            Toast.makeText(MainActivity.this, "No User Found!", Toast.LENGTH_SHORT).show();
+
+                            Toast.makeText(MainActivity.this, "No User Found!", Toast.LENGTH_SHORT).show();
                         }
                     }
 
