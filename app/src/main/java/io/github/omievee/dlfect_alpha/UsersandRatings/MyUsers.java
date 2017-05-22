@@ -11,7 +11,16 @@ public class MyUsers {
     private String mName;
     private String mLastName;
     private String mEmail;
-    private double mRating = 2.5;
+    private RatingClasses mRatings;
+
+    public RatingClasses getmRatings() {
+        return mRatings;
+    }
+
+    public void setmRatings(RatingClasses mRatings) {
+        this.mRatings = mRatings;
+    }
+
 
 
     public String getmName() {
@@ -38,19 +47,12 @@ public class MyUsers {
         this.mEmail = mEmail;
     }
 
-    public double getmRating() {
-        return mRating;
-    }
 
-    public void setmRating(double mRating) {
-        this.mRating = mRating;
-    }
-
-    public MyUsers(String mName, String mLastName, String mEmail, double mRating) {
+    public MyUsers(String mName, String mLastName, String mEmail) {
         this.mName = mName;
         this.mLastName = mLastName;
         this.mEmail = mEmail;
-        this.mRating = mRating;
+        mRatings = new RatingClasses();
     }
 
     public MyUsers() {

@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Dlfect_ALPHA</string>
+
+    <string-array name="choose_rating">
+
+        <item P="Professional"/>
+        <item E="Engagement"/>
+        <item F="Friendliness"/>
+        <item Pr="Presentation"/>
+        <item M= "Manners"/>
+
+    </string-array>
+
 </resources>

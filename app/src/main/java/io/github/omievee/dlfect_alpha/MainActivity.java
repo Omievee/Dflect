@@ -8,8 +8,11 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,11 +29,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import io.github.omievee.dlfect_alpha.UsersandRatings.MyUsers;
 
+import static android.R.attr.data;
+import static android.R.attr.debuggable;
+import static android.R.attr.defaultHeight;
 import static android.os.Build.VERSION_CODES.M;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,8 +52,17 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     DatabaseReference mRatingGiven;
     DatabaseReference mUsersID;
-    public static final String FIREBASE_CHILD_RATING = "Rating";
     public static final String SELECTED_USER = "";
+    Spinner mSpinny;
+    ArrayAdapter<String> mAdapt;
+    String scores[] = {"Select A Category", "Friendly", "Professionalism", "Manners", "Engagement", "Presentation"};
+    public static final int Friendly = 0;
+    public static final int Professionalism = 1;
+    public static final int Manners = 2;
+    public static final int ENgagement = 3;
+    public static final int Presentation = 4;
+    private String mFoundUser;
+    double mSelectedStars;
 
 
     @Override
@@ -62,13 +76,15 @@ public class MainActivity extends AppCompatActivity {
         mTexty = (TextView) findViewById(R.id.TEXTy);
         mRating = (RatingBar) findViewById(R.id.RATING);
         mSEARCH = (SearchView) findViewById(R.id.EDITFIRE);
+        mSpinny = (Spinner) findViewById(R.id.spinner);
 
+
+        mAdapt = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, scores);
+        mSpinny.setAdapter(mAdapt);
 
         //FireBase 1
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         mRef = database.getReference("users");
-
-        mRatingGiven = FirebaseDatabase.getInstance().getReference().child(FIREBASE_CHILD_RATING);
 
 
         //Authenticating USer
@@ -81,24 +97,31 @@ public class MainActivity extends AppCompatActivity {
         }
         mTexty.setText("Search Users");
 
-        //METHODS TO EXECUTE:
-        //Perform Search on FB & bring back matching email.
-        searchFB();
-
-        //Onclick of submit raitng
-        mSend.setOnClickListener(new View.OnClickListener() {
+        mSpinny.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-//                FirebaseDatabase database = FirebaseDatabase.getInstance();
-//                DatabaseReference peerRate = database.getReference().child("Activity");
-////                peerRate.push().setValue(mCurrentUserID + "  " + mRating.getRating() + "  " );
-////                Log.d(TAG, "onClick: " + mCurrentUserID);
-////                peerRate.child()
-                FirebaseUser myID = mRateSomeone.getCurrentUser();
-//                    myID = new MyUsers
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
+
+        //METHODS TO EXECUTE:
+        //Perform Search on FB & bring back matching email.
+        searchView();
+
+        //Onclick of submit raitng
+//        mSend.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//
+//
+//            }
+//        });
 
 
     }
@@ -111,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
             // Successfully signed in
             if (resultCode == ResultCodes.OK) {
                 mCurrentUserID = mAuth.getCurrentUser().getDisplayName();
+                //if autheticated, save user to database w/ default values
                 saveUsersToFirebase();
                 return;
             } else {
@@ -128,15 +152,9 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
             }
-
-
         }
     }
 
-    //Add rating to FDB
-    public void peer2PeerRate(String rating) {
-        mRatingGiven.push().setValue(rating);
-    }
 
     //Sign in  to GoogleAccount
     public void signIN() {
@@ -163,21 +181,21 @@ public class MainActivity extends AppCompatActivity {
                     if (!dataSnapshot.exists()) {
                         database.child(currentUser.getUid()).setValue(new MyUsers(currentUser.getUid(),
                                 currentUser.getDisplayName(),
-                                currentUser.getEmail(), 2.5));
+                                currentUser.getEmail()));
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     throw databaseError.toException();
-
                 }
             });
 
         }
     }
 
-    public void searchFB() {
+    //commence search in searchview..
+    public void searchView() {
         mSEARCH.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -189,12 +207,19 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(final String newText) {
+                searchView_FireBaseSearch(newText);
+                return true;
+            }
+
+            //go through Firebase & search for this user.. once found, Set onclick to that specific user & adjust base score
+            public void searchView_FireBaseSearch(final String newText) {
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                 final DatabaseReference searchUsers = database.getReference("users");
                 searchUsers.orderByChild("mEmail").equalTo(newText).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(final DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
+                            Log.d(TAG, "FIRST DATA CHANGE: " + dataSnapshot);
 
                             boolean exit = true;
                             int counter = 1;
@@ -205,45 +230,64 @@ public class MainActivity extends AppCompatActivity {
                                 else
                                     counter++;
                             }
-                           key = key.substring(1, counter);
-//                            System.out.println(key);
+                            key = key.substring(1, counter);
 
                             mTexty.setText(dataSnapshot.child(key).getValue(MyUsers.class).getmEmail());
-                            //check if field is empty & clear TextView
 
-                            final MyUsers myUser = dataSnapshot.child(key).getValue(MyUsers.class);
+                            //get value associted w/ user & whatever the spinner is on..
+                            final MyUsers foundUser = dataSnapshot.child(key).getValue(MyUsers.class);
+                            String categorySelected = mSpinny.getSelectedItem().toString();
+                            switch (categorySelected){
+                                case "Engagement":
+                                    foundUser.getmRatings().getEngagement();
+                                    break;
+                                case "Friendly":
+                                    foundUser.getmRatings().getFriendly();
+                                    break;
+                                case "Professionalism":
+                                    foundUser.getmRatings().getProfessionalism();
+                                    break;
+                                case "Presentation":
+                                    foundUser.getmRatings().getPresentation();
+                                case "Manners":
+                                    foundUser.getmRatings().getManners();
+                                    break;
+                                default:
+                                    Toast.makeText(MainActivity.this, "Select a Rating", Toast.LENGTH_SHORT).show();
 
-                            String usertest = dataSnapshot.child(key).getValue(MyUsers.class).getmEmail();
-                            final Double test = dataSnapshot.child(key).getValue(MyUsers.class).getmRating();
+                                    Log.d(TAG, "SPINSPINSPIN: " + categorySelected);
+                            }
 
-                            //once found set on click to rate this person!
+                            //once found set on click to rate this person & update their base rate.
                             final String newKey = key;
                             mSend.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    DatabaseReference database = searchUsers.child(newKey).child("mRating");
-                                    database.setValue(mRating.getRating());
+//                                    mFoundUser = dataSnapshot.child(newKey).getValue(MyUsers.class).getmLastName();
+
+                                    //set value to coresponding spinner / user selection.
+                                    searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString()).setValue(1.5);
+
 
                                 }
                             });
+
+                            //reset textview
                         } else if (newText.equals("")) {
+
                             mTexty.setText("Search Users");
                         }
-
-
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Toast.makeText(MainActivity.this, "Nothing Found", Toast.LENGTH_SHORT).show();
+
                     }
                 });
 
-                return false;
             }
         });
     }
+
 }
-
-
 
