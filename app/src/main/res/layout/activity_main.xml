@@ -7,35 +7,53 @@
     android:orientation="vertical"
     tools:context="io.github.omievee.dlfect_alpha.MainActivity">
 
+
+    <TextView
+        android:id="@+id/TEXTy"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <android.support.v7.widget.SearchView
         android:id="@+id/EDITFIRE"
         android:hint="Find User"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/RV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-
-    <RatingBar
-        android:id="@+id/RATING"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:stepSize=".05" />
 
     <Button
         android:id="@+id/send"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
+        android:layout_margin="30dp"
         android:layout_height="wrap_content"
         android:text="send" />
 
+    <RatingBar
+        android:id="@+id/RATING"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="center_horizontal"
+        android:stepSize=".05" />
+
+    <Spinner
+        android:layout_gravity="center"
+        android:id="@+id/spinner"
+
+        android:spinnerMode="dropdown"
+        android:entries="@array/choose_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </Spinner>
+
     <TextView
-        android:id="@+id/TEXTy"
-        android:gravity="center_horizontal"
+        android:id="@+id/testtext"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </LinearLayout>
+
