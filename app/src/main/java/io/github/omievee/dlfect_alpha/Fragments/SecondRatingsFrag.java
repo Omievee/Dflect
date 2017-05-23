@@ -34,5 +34,7 @@ public class SecondRatingsFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.secondratingsfrag, container, false);
         return view;
+
+
     }
 }

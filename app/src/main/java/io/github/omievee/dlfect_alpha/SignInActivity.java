@@ -27,9 +27,9 @@ import io.github.omievee.dlfect_alpha.Fragments.RatingsAdapter;
 import io.github.omievee.dlfect_alpha.UsersandRatings.MyUsers;
 
 import static com.google.android.gms.common.SignInButton.SIZE_ICON_ONLY;
-import static io.github.omievee.dlfect_alpha.MainActivity.USERSIGNIN;
 
 public class SignInActivity extends AppCompatActivity {
+    public static final int USERSIGNIN = 1;
     FirebaseAuth mAuth;
     String mCurrentUserID;
 

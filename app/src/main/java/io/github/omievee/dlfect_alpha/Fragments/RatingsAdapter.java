@@ -31,4 +31,17 @@ public class RatingsAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return 2;
     }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+            case 0:
+                return "Send Rating";
+            case 1:
+                return "My Info";
+            default:
+                return null;
+        }
+    }
+
 }

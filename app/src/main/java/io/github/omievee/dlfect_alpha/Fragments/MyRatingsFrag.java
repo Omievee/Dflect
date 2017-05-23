@@ -35,6 +35,8 @@ import io.github.omievee.dlfect_alpha.UsersandRatings.MyUsers;
  */
 
 public class MyRatingsFrag extends Fragment {
+    public static final String TAG = "found";
+
     RatingBar mRating;
     TextView mTexty;
     Button mSend;
