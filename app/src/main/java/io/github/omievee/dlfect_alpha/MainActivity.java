@@ -5,10 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RatingBar;
@@ -29,14 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import io.github.omievee.dlfect_alpha.UsersandRatings.MyUsers;
-
-import static android.R.attr.data;
-import static android.R.attr.debuggable;
-import static android.R.attr.defaultHeight;
-import static android.os.Build.VERSION_CODES.M;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "found";
@@ -50,19 +42,9 @@ public class MainActivity extends AppCompatActivity {
     Button mSend;
     SearchView mSEARCH;
     FirebaseAuth mAuth;
-    DatabaseReference mRatingGiven;
-    DatabaseReference mUsersID;
-    public static final String SELECTED_USER = "";
     Spinner mSpinny;
     ArrayAdapter<String> mAdapt;
     String scores[] = {"Select A Category", "Friendly", "Professionalism", "Manners", "Engagement", "Presentation"};
-    public static final int Friendly = 0;
-    public static final int Professionalism = 1;
-    public static final int Manners = 2;
-    public static final int ENgagement = 3;
-    public static final int Presentation = 4;
-    private String mFoundUser;
-    double mSelectedStars;
 
 
     @Override
@@ -97,31 +79,19 @@ public class MainActivity extends AppCompatActivity {
         }
         mTexty.setText("Search Users");
 
-        mSpinny.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
         //METHODS TO EXECUTE:
         //Perform Search on FB & bring back matching email.
         searchView();
 
         //Onclick of submit raitng
-//        mSend.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//
-//
-//            }
-//        });
+        mSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Find Someone to Rate!", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
 
 
     }
@@ -219,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            Log.d(TAG, "FIRST DATA CHANGE: " + dataSnapshot);
 
                             boolean exit = true;
                             int counter = 1;
@@ -234,41 +203,90 @@ public class MainActivity extends AppCompatActivity {
 
                             mTexty.setText(dataSnapshot.child(key).getValue(MyUsers.class).getmEmail());
 
-                            //get value associted w/ user & whatever the spinner is on..
-                            final MyUsers foundUser = dataSnapshot.child(key).getValue(MyUsers.class);
-                            String categorySelected = mSpinny.getSelectedItem().toString();
-                            switch (categorySelected){
-                                case "Engagement":
-                                    foundUser.getmRatings().getEngagement();
-                                    break;
-                                case "Friendly":
-                                    foundUser.getmRatings().getFriendly();
-                                    break;
-                                case "Professionalism":
-                                    foundUser.getmRatings().getProfessionalism();
-                                    break;
-                                case "Presentation":
-                                    foundUser.getmRatings().getPresentation();
-                                case "Manners":
-                                    foundUser.getmRatings().getManners();
-                                    break;
-                                default:
-                                    Toast.makeText(MainActivity.this, "Select a Rating", Toast.LENGTH_SHORT).show();
 
-                                    Log.d(TAG, "SPINSPINSPIN: " + categorySelected);
-                            }
-
-                            //once found set on click to rate this person & update their base rate.
+                            //once found set on click to rate this person & update their selected category.
                             final String newKey = key;
                             mSend.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-//                                    mFoundUser = dataSnapshot.child(newKey).getValue(MyUsers.class).getmLastName();
+                                    final MyUsers foundUser = dataSnapshot.child(newKey).getValue(MyUsers.class);
+                                    String categorySelected = mSpinny.getSelectedItem().toString().toLowerCase();
 
+                                    switch (categorySelected) {
+                                        //always add to the counter when Rated .. add to sum... and do math for average of selected category + update overall average
+                                        case "friendly":
+                                            foundUser.getmRatings().setFriendlyCOUNT(foundUser.getmRatings().getFriendlyCOUNT() + 1);
+                                            foundUser.getmRatings().setFriendlySUM(foundUser.getmRatings().getFriendlySUM() + mRating.getRating());
+
+                                            double friendSUM = foundUser.getmRatings().getFriendlySUM();
+                                            double friendCOUNT = foundUser.getmRatings().getFriendlyCOUNT();
+                                            double updateOverall1 = friendSUM / friendCOUNT / 5 + 2;
+
+                                            searchUsers.child(newKey).child("mRatings").child("friendlyCOUNT").setValue(friendCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("friendlySUM").setValue(friendSUM);
+                                            searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updateOverall1);
+                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(friendSUM / friendCOUNT);
+                                            break;
+                                        case "engagement":
+                                            foundUser.getmRatings().setEngCOUNT(foundUser.getmRatings().getEngCOUNT() + 1);
+                                            foundUser.getmRatings().setEngSUM(foundUser.getmRatings().getEngSUM() + mRating.getRating());
+
+                                            double engSUM = foundUser.getmRatings().getEngSUM();
+                                            double engCOUNT = foundUser.getmRatings().getEngCOUNT();
+                                            double updateOverall2 = engSUM / engCOUNT / 5 + 2;
+
+                                            searchUsers.child(newKey).child("mRatings").child("engCOUNT").setValue(engCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("engSUM").setValue(engSUM);
+                                            searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updateOverall2);
+                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(engSUM / engCOUNT);
+
+                                            break;
+                                        case "professionalism":
+                                            foundUser.getmRatings().setProCOUNT(foundUser.getmRatings().getProCOUNT() + 1);
+                                            foundUser.getmRatings().setProSUM(foundUser.getmRatings().getProSUM() + mRating.getRating());
+
+                                            double proSUM = foundUser.getmRatings().getProSUM();
+                                            double proCOUNT = foundUser.getmRatings().getProCOUNT();
+                                            double updatedOverall3 = proSUM / proCOUNT / 5 + 2;
+
+                                            searchUsers.child(newKey).child("mRatings").child("proCOUNT").setValue(proCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("proSUM").setValue(proSUM);
+                                            searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall3);
+                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(proSUM / proCOUNT);
+                                            break;
+                                        case "presentation":
+                                            foundUser.getmRatings().setPreCOUNT(foundUser.getmRatings().getPreCOUNT() + 1);
+                                            foundUser.getmRatings().setPreSUM(foundUser.getmRatings().getPreSUM() + mRating.getRating());
+
+                                            double preSUM = foundUser.getmRatings().getPreSUM();
+                                            double preCOUNT = foundUser.getmRatings().getPreCOUNT();
+                                            double updatedOverall4 = preSUM / preCOUNT / 5 + 2;
+
+                                            searchUsers.child(newKey).child("mRatings").child("preCOUNT").setValue(preCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("preSUM").setValue(preSUM);
+                                            searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall4);
+                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(preSUM / preCOUNT);
+                                            break;
+                                        case "manners":
+                                            foundUser.getmRatings().setMannersCOUNT(foundUser.getmRatings().getMannersCOUNT() + 1);
+                                            foundUser.getmRatings().setMannersSUM(foundUser.getmRatings().getMannersCOUNT() + mRating.getRating());
+
+                                            double manSUM = foundUser.getmRatings().getMannersSUM();
+                                            double manCOUNT = foundUser.getmRatings().getMannersCOUNT();
+                                            double updatedOverall5 = manSUM / manCOUNT / 5 + 2;
+
+                                            searchUsers.child(newKey).child("mRatings").child("mannersCOUNT").setValue(manCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("mannersSUM").setValue(manSUM);
+                                            searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall5);
+                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(manSUM / manCOUNT);
+                                            break;
+                                        default:
+                                            Toast.makeText(MainActivity.this, "Select a Category", Toast.LENGTH_SHORT).show();
+                                            break;
+
+                                    }
                                     //set value to coresponding spinner / user selection.
-                                    searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString()).setValue(1.5);
-
-
+//                                    searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString()).setValue(1.5);
                                 }
                             });
 
@@ -284,7 +302,6 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-
             }
         });
     }
