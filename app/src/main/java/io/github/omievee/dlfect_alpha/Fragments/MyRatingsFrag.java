@@ -112,6 +112,7 @@ public class MyRatingsFrag extends Fragment {
                 return true;
             }
 
+
             //go through Firebase & search for this user.. once found, Set onclick to that specific user & adjust base score
 
             public void searchView_FireBaseSearch(final String newText) {
@@ -145,6 +146,7 @@ public class MyRatingsFrag extends Fragment {
                                     String categorySelected = mSpinny.getSelectedItem().toString().toLowerCase();
 
                                     switch (categorySelected) {
+                                        //case & child matching case were later hardcoded in because titles were changed in the spinner...
                                         //always add to the counter when Rated .. add to sum... and do math for average of selected category + update overall average
                                         case "friendly":
                                             foundUser.getmRatings().setFriendlyCOUNT(foundUser.getmRatings().getFriendlyCOUNT() + 1);
@@ -199,7 +201,7 @@ public class MyRatingsFrag extends Fragment {
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall4);
                                             searchUsers.child(newKey).child("mRatings").child("presentation").setValue(preSUM / preCOUNT);
                                             break;
-                                        case "politeness":
+                                        case "polite":
                                             foundUser.getmRatings().setMannersCOUNT(foundUser.getmRatings().getMannersCOUNT() + 1);
                                             foundUser.getmRatings().setMannersSUM(foundUser.getmRatings().getMannersCOUNT() + mRating.getRating());
 
@@ -210,7 +212,6 @@ public class MyRatingsFrag extends Fragment {
                                             searchUsers.child(newKey).child("mRatings").child("mannersCOUNT").setValue(manCOUNT);
                                             searchUsers.child(newKey).child("mRatings").child("mannersSUM").setValue(manSUM);
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall5);
-                                            //changed from manners to politeness last minute.. so hardcoded in.
                                             searchUsers.child(newKey).child("mRatings").child("manners").setValue(manSUM / manCOUNT);
                                             break;
                                         default:
@@ -244,5 +245,7 @@ public class MyRatingsFrag extends Fragment {
         });
 
     }
+
+
 
 }

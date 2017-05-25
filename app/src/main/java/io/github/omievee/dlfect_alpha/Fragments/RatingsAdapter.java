@@ -44,4 +44,5 @@ public class RatingsAdapter extends FragmentPagerAdapter {
         }
     }
 
+
 }
