@@ -3,6 +3,7 @@ package io.github.omievee.dlfect_alpha.Fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ public class StatsFrag extends Fragment {
     TextView mFtext, mProText, mPreText, mEngText, mPOL;
     FirebaseAuth mAuth;
     ImageView mPic;
+    SwipeRefreshLayout mREFRESHING;
 
     public StatsFrag() {
     }
@@ -68,6 +70,16 @@ public class StatsFrag extends Fragment {
         mEngText = (TextView) view.findViewById(R.id.EngSCORE);
         mEngText.setText(R.string.currentENG);
 
+
+        mREFRESHING = (SwipeRefreshLayout) view.findViewById(R.id.SWIPEREFRESH);
+        mREFRESHING.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                displayPersonalStats();
+                mREFRESHING.setRefreshing(false);
+
+            }
+        });
 
         displayPersonalStats();
 
