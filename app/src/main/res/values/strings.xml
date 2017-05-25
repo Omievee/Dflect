@@ -1,14 +1,20 @@
 <resources>
     <string name="app_name">Dlfect_ALPHA</string>
-
     <string-array name="choose_rating">
-
-        <item P="Professional"/>
-        <item E="Engagement"/>
-        <item F="Friendliness"/>
-        <item Pr="Presentation"/>
-        <item M= "Manners"/>
-
+        <item P="Professional" />
+        <item E="Engagement" />
+        <item F="Friendliness" />
+        <item Pr="Presentation" />
+        <item M="Manners" />
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="currentF">"Current Friendly Rating: "</string>
+    <string name="currentPRO">"Current Professional Rating: "</string>
+    <string name="currentPRE">"Current Presentation Rating: "</string>
+    <string name="currentENG">"Current Engagement Rating: "</string>
+    <string name="currentPOL">"Current Politeness Rating: "</string>
 
 </resources>

@@ -1,168 +1,99 @@
-package io.github.omievee.dlfect_alpha;
+package io.github.omievee.dlfect_alpha.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
-import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Arrays;
-
+import io.github.omievee.dlfect_alpha.R;
 import io.github.omievee.dlfect_alpha.UsersandRatings.MyUsers;
 
-public class MainActivity extends AppCompatActivity {
-    public static final String TAG = "found";
-    public static final int USERSIGNIN = 1;
+/**
+ * Created by omievee on 5/23/17.
+ */
 
-    DatabaseReference mRef;
-    String mCurrentUserID;
-    FirebaseAuth mRateSomeone;
+public class MyRatingsFrag extends Fragment {
+    public static final String TAG = "found";
+
     RatingBar mRating;
     TextView mTexty;
-    Button mSend;
+    FloatingActionButton mSend;
     SearchView mSEARCH;
-    FirebaseAuth mAuth;
     Spinner mSpinny;
     ArrayAdapter<String> mAdapt;
-    String scores[] = {"Select A Category", "Friendly", "Professionalism", "Manners", "Engagement", "Presentation"};
+    String scores[] = {"Were They...", "Engaged", "Friendly", "Polite", "Presentable", "Professional"};
+    DatabaseReference mRef;
+    MediaPlayer mPositiveratingSound, mNegativeratingSound;
 
 
+    public MyRatingsFrag() {
+    }
+
+    public static MyRatingsFrag newInstance() {
+        MyRatingsFrag frag = new MyRatingsFrag();
+        Bundle ment = new Bundle();
+
+        frag.setArguments(ment);
+        return frag;
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.myratingsfrag, container, false);
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mSend = (FloatingActionButton) view.findViewById(R.id.send);
+        mTexty = (TextView) view.findViewById(R.id.TEXTy);
+        mRating = (RatingBar) view.findViewById(R.id.RATING);
+        mSEARCH = (SearchView) view.findViewById(R.id.EDITFIRE);
+        mSpinny = (Spinner) view.findViewById(R.id.spinner);
 
-        //views
-        mSend = (Button) findViewById(R.id.send);
-        mTexty = (TextView) findViewById(R.id.TEXTy);
-        mRating = (RatingBar) findViewById(R.id.RATING);
-        mSEARCH = (SearchView) findViewById(R.id.EDITFIRE);
-        mSpinny = (Spinner) findViewById(R.id.spinner);
-
-
-        mAdapt = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, scores);
+        mAdapt = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, scores);
         mSpinny.setAdapter(mAdapt);
 
         //FireBase 1
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         mRef = database.getReference("users");
 
-
-        //Authenticating USer
-        mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() != null) {
-            mCurrentUserID = mAuth.getCurrentUser().getDisplayName();
-        } else {
-            signIN();
-
-        }
-        mTexty.setText("Search Users");
-
-        //METHODS TO EXECUTE:
-        //Perform Search on FB & bring back matching email.
-        searchView();
+        mSend.setHapticFeedbackEnabled(true);
 
         //Onclick of submit raitng
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Find Someone to Rate!", Toast.LENGTH_SHORT).show();
-
-
+                Toast.makeText(getContext(), "Find Someone to Rate!", Toast.LENGTH_SHORT).show();
             }
         });
 
+        mTexty.setText("Rate A Friend!");
+        searchView();
+
+        mPositiveratingSound = MediaPlayer.create(view.getContext(), R.raw.nosedive_4_stars);
+        mNegativeratingSound = MediaPlayer.create(view.getContext(), R.raw.nosedive_1_star);
+
+        return view;
 
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // RC_SIGN_IN is the request code you passed into startActivityForResult(...) when starting the sign in flow.
-        if (requestCode == USERSIGNIN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-            // Successfully signed in
-            if (resultCode == ResultCodes.OK) {
-                mCurrentUserID = mAuth.getCurrentUser().getDisplayName();
-                //if autheticated, save user to database w/ default values
-                saveUsersToFirebase();
-                return;
-            } else {
-                // Sign in failed
-                if (response == null) {
-                    // User pressed back button
-                    return;
-                }
-                if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(this, "Check Network", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-
-                    return;
-                }
-            }
-        }
-    }
-
-
-    //Sign in  to GoogleAccount
-    public void signIN() {
-        startActivityForResult(
-                // Get an instance of AuthUI based on the default app
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setIsSmartLockEnabled(false)
-                        .setProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
-                        .build(), USERSIGNIN);
-    }
-
-
-    //Check if users already exist in FB IF NOT add
-    public void saveUsersToFirebase() {
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference("users");
-        final FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if (currentUser != null) {
-            DatabaseReference child = database.child(currentUser.getUid());
-            child.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.exists()) {
-                        database.child(currentUser.getUid()).setValue(new MyUsers(currentUser.getUid(),
-                                currentUser.getDisplayName(),
-                                currentUser.getEmail()));
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    throw databaseError.toException();
-                }
-            });
-
-        }
-    }
 
     //commence search in searchview..
     public void searchView() {
@@ -182,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //go through Firebase & search for this user.. once found, Set onclick to that specific user & adjust base score
+
             public void searchView_FireBaseSearch(final String newText) {
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                 final DatabaseReference searchUsers = database.getReference("users");
@@ -201,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             key = key.substring(1, counter);
 
-                            mTexty.setText(dataSnapshot.child(key).getValue(MyUsers.class).getmEmail());
+                            mTexty.setText(dataSnapshot.child(key).getValue(MyUsers.class).getmLastName());
 
 
                             //once found set on click to rate this person & update their selected category.
@@ -227,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updateOverall1);
                                             searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(friendSUM / friendCOUNT);
                                             break;
-                                        case "engagement":
+                                        case "engaged":
                                             foundUser.getmRatings().setEngCOUNT(foundUser.getmRatings().getEngCOUNT() + 1);
                                             foundUser.getmRatings().setEngSUM(foundUser.getmRatings().getEngSUM() + mRating.getRating());
 
@@ -238,10 +170,10 @@ public class MainActivity extends AppCompatActivity {
                                             searchUsers.child(newKey).child("mRatings").child("engCOUNT").setValue(engCOUNT);
                                             searchUsers.child(newKey).child("mRatings").child("engSUM").setValue(engSUM);
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updateOverall2);
-                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(engSUM / engCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("engagement").setValue(engSUM / engCOUNT);
 
                                             break;
-                                        case "professionalism":
+                                        case "professional":
                                             foundUser.getmRatings().setProCOUNT(foundUser.getmRatings().getProCOUNT() + 1);
                                             foundUser.getmRatings().setProSUM(foundUser.getmRatings().getProSUM() + mRating.getRating());
 
@@ -252,9 +184,9 @@ public class MainActivity extends AppCompatActivity {
                                             searchUsers.child(newKey).child("mRatings").child("proCOUNT").setValue(proCOUNT);
                                             searchUsers.child(newKey).child("mRatings").child("proSUM").setValue(proSUM);
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall3);
-                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(proSUM / proCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("professionalism").setValue(proSUM / proCOUNT);
                                             break;
-                                        case "presentation":
+                                        case "presentable":
                                             foundUser.getmRatings().setPreCOUNT(foundUser.getmRatings().getPreCOUNT() + 1);
                                             foundUser.getmRatings().setPreSUM(foundUser.getmRatings().getPreSUM() + mRating.getRating());
 
@@ -265,9 +197,9 @@ public class MainActivity extends AppCompatActivity {
                                             searchUsers.child(newKey).child("mRatings").child("preCOUNT").setValue(preCOUNT);
                                             searchUsers.child(newKey).child("mRatings").child("preSUM").setValue(preSUM);
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall4);
-                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(preSUM / preCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("presentation").setValue(preSUM / preCOUNT);
                                             break;
-                                        case "manners":
+                                        case "politeness":
                                             foundUser.getmRatings().setMannersCOUNT(foundUser.getmRatings().getMannersCOUNT() + 1);
                                             foundUser.getmRatings().setMannersSUM(foundUser.getmRatings().getMannersCOUNT() + mRating.getRating());
 
@@ -278,22 +210,27 @@ public class MainActivity extends AppCompatActivity {
                                             searchUsers.child(newKey).child("mRatings").child("mannersCOUNT").setValue(manCOUNT);
                                             searchUsers.child(newKey).child("mRatings").child("mannersSUM").setValue(manSUM);
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall5);
-                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(manSUM / manCOUNT);
+                                            //changed from manners to politeness last minute.. so hardcoded in.
+                                            searchUsers.child(newKey).child("mRatings").child("manners").setValue(manSUM / manCOUNT);
                                             break;
                                         default:
-                                            Toast.makeText(MainActivity.this, "Select a Category", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getContext(), "Select a Category", Toast.LENGTH_SHORT).show();
                                             break;
 
+
                                     }
-                                    //set value to coresponding spinner / user selection.
-//                                    searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString()).setValue(1.5);
+                                    Toast.makeText(getContext(), "Rating Sent!", Toast.LENGTH_SHORT).show();
+                                    if (mRating.getRating() >= 2.5) {
+                                        mPositiveratingSound.start();
+                                    } else {
+                                        mNegativeratingSound.start();
+                                    }
                                 }
                             });
-
                             //reset textview
                         } else if (newText.equals("")) {
 
-                            mTexty.setText("Search Users");
+                            mTexty.setText("Rate A Friend!");
                         }
                     }
 
@@ -301,10 +238,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
+
                 });
             }
         });
+
     }
 
 }
-
