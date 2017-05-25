@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgrounds"
+    android:orientation="vertical">
 
 
     <android.support.v7.widget.SearchView
         android:id="@+id/EDITFIRE"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Find User"
+        android:layout_alignParentStart="true"
         android:layout_toEndOf="@+id/spinner"
-        android:layout_alignParentStart="true" />
-
-
-    <Button
-        android:id="@+id/send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Search"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_below="@+id/TEXTy"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp" />
-
+        android:hint="Find User" />
 
     <RatingBar
         android:id="@+id/RATING"
@@ -33,9 +22,9 @@
         android:layout_gravity="center_horizontal"
         android:stepSize=".05"
         android:theme="@style/RatingBar"
-        android:layout_marginTop="24dp"
-        android:layout_below="@+id/EDITFIRE"
-        android:layout_centerHorizontal="true" />
+        android:layout_above="@+id/send"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="102dp" />
 
     <Spinner
         android:id="@+id/spinner"
@@ -43,21 +32,35 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:entries="@array/choose_rating"
-        android:spinnerMode="dropdown"
-        android:layout_alignBaseline="@+id/send"
-        android:layout_alignBottom="@+id/send"
-        android:layout_toStartOf="@+id/send"
-        android:layout_marginEnd="19dp">
+        android:layout_below="@+id/TEXTy"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp">
     </Spinner>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="39dp"
+        android:layout_marginEnd="29dp"
+        android:src="@drawable/ic_trophy_award_black_24dp"
+        fab:backgroundTint="#FAFAFA"
+        fab:fabSize="normal"
+        fab:rippleColor="@color/duskYellow" />
 
     <TextView
         android:id="@+id/TEXTy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/send"
-        android:layout_below="@+id/RATING"
-        android:layout_marginTop="35dp"
-        android:text="TextView" />
+        android:textStyle="italic"
+        android:layout_marginTop="41dp"
+        android:text="TextView"
+        android:textColor="#212121"
+        android:textSize="30sp"
+        android:layout_below="@+id/EDITFIRE"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

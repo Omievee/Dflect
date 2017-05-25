@@ -1,10 +1,9 @@
-package io.github.omievee.dlfect_alpha;
+package io.github.omievee.dlfect_alpha.SignIn_Main;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -22,17 +21,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
-import io.github.omievee.dlfect_alpha.Fragments.MyRatingsFrag;
-import io.github.omievee.dlfect_alpha.Fragments.RatingsAdapter;
+import io.github.omievee.dlfect_alpha.R;
 import io.github.omievee.dlfect_alpha.UsersandRatings.MyUsers;
 
 import static com.google.android.gms.common.SignInButton.SIZE_ICON_ONLY;
 
 public class SignInActivity extends AppCompatActivity {
     public static final int USERSIGNIN = 1;
-    FirebaseAuth mAuth;
-    String mCurrentUserID;
-
+    public FirebaseAuth mAuth;
+    public String mCurrentUserID;
 
 
     @Override
@@ -54,8 +51,7 @@ public class SignInActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     //Sign in  to GoogleAccount
-                       signIN();
-
+                    signIN();
                 }
 
             });
@@ -73,13 +69,15 @@ public class SignInActivity extends AppCompatActivity {
             // Successfully signed in
             if (resultCode == ResultCodes.OK) {
                 mCurrentUserID = mAuth.getCurrentUser().getDisplayName();
-                //if autheticated, save user to database w/ default values & take to main activity
+                //if authenticated, save user to database w/ default values & take to main activity
                 saveUsersToFirebase();
-                Intent intent = new Intent(getApplicationContext(), RatingsAdapter.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
+                finish();
                 return;
             } else {
                 // Sign in failed
+
                 if (response == null) {
                     // User pressed back button
                     return;

@@ -1,32 +1,29 @@
 package io.github.omievee.dlfect_alpha.Fragments;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import io.github.omievee.dlfect_alpha.MainActivity;
 import io.github.omievee.dlfect_alpha.R;
 import io.github.omievee.dlfect_alpha.UsersandRatings.MyUsers;
 
@@ -39,13 +36,14 @@ public class MyRatingsFrag extends Fragment {
 
     RatingBar mRating;
     TextView mTexty;
-    Button mSend;
+    FloatingActionButton mSend;
     SearchView mSEARCH;
-    FirebaseAuth mAuth;
     Spinner mSpinny;
     ArrayAdapter<String> mAdapt;
-    String scores[] = {"Select A Category", "Friendly", "Professionalism", "Manners", "Engagement", "Presentation"};
+    String scores[] = {"Were They...", "Engaged", "Friendly", "Polite", "Presentable", "Professional"};
     DatabaseReference mRef;
+    MediaPlayer mPositiveratingSound, mNegativeratingSound;
+
 
     public MyRatingsFrag() {
     }
@@ -63,12 +61,11 @@ public class MyRatingsFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.myratingsfrag, container, false);
 
-        mSend = (Button) view.findViewById(R.id.send);
+        mSend = (FloatingActionButton) view.findViewById(R.id.send);
         mTexty = (TextView) view.findViewById(R.id.TEXTy);
         mRating = (RatingBar) view.findViewById(R.id.RATING);
         mSEARCH = (SearchView) view.findViewById(R.id.EDITFIRE);
         mSpinny = (Spinner) view.findViewById(R.id.spinner);
-
 
         mAdapt = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_dropdown_item, scores);
         mSpinny.setAdapter(mAdapt);
@@ -77,20 +74,21 @@ public class MyRatingsFrag extends Fragment {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         mRef = database.getReference("users");
 
+        mSend.setHapticFeedbackEnabled(true);
 
         //Onclick of submit raitng
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Find Someone to Rate!", Toast.LENGTH_SHORT).show();
-
-
             }
         });
 
-        mTexty.setText("Search Users");
+        mTexty.setText("Rate A Friend!");
         searchView();
 
+        mPositiveratingSound = MediaPlayer.create(view.getContext(), R.raw.nosedive_4_stars);
+        mNegativeratingSound = MediaPlayer.create(view.getContext(), R.raw.nosedive_1_star);
 
         return view;
 
@@ -161,7 +159,7 @@ public class MyRatingsFrag extends Fragment {
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updateOverall1);
                                             searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(friendSUM / friendCOUNT);
                                             break;
-                                        case "engagement":
+                                        case "engaged":
                                             foundUser.getmRatings().setEngCOUNT(foundUser.getmRatings().getEngCOUNT() + 1);
                                             foundUser.getmRatings().setEngSUM(foundUser.getmRatings().getEngSUM() + mRating.getRating());
 
@@ -172,10 +170,10 @@ public class MyRatingsFrag extends Fragment {
                                             searchUsers.child(newKey).child("mRatings").child("engCOUNT").setValue(engCOUNT);
                                             searchUsers.child(newKey).child("mRatings").child("engSUM").setValue(engSUM);
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updateOverall2);
-                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(engSUM / engCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("engagement").setValue(engSUM / engCOUNT);
 
                                             break;
-                                        case "professionalism":
+                                        case "professional":
                                             foundUser.getmRatings().setProCOUNT(foundUser.getmRatings().getProCOUNT() + 1);
                                             foundUser.getmRatings().setProSUM(foundUser.getmRatings().getProSUM() + mRating.getRating());
 
@@ -186,9 +184,9 @@ public class MyRatingsFrag extends Fragment {
                                             searchUsers.child(newKey).child("mRatings").child("proCOUNT").setValue(proCOUNT);
                                             searchUsers.child(newKey).child("mRatings").child("proSUM").setValue(proSUM);
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall3);
-                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(proSUM / proCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("professionalism").setValue(proSUM / proCOUNT);
                                             break;
-                                        case "presentation":
+                                        case "presentable":
                                             foundUser.getmRatings().setPreCOUNT(foundUser.getmRatings().getPreCOUNT() + 1);
                                             foundUser.getmRatings().setPreSUM(foundUser.getmRatings().getPreSUM() + mRating.getRating());
 
@@ -199,9 +197,9 @@ public class MyRatingsFrag extends Fragment {
                                             searchUsers.child(newKey).child("mRatings").child("preCOUNT").setValue(preCOUNT);
                                             searchUsers.child(newKey).child("mRatings").child("preSUM").setValue(preSUM);
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall4);
-                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(preSUM / preCOUNT);
+                                            searchUsers.child(newKey).child("mRatings").child("presentation").setValue(preSUM / preCOUNT);
                                             break;
-                                        case "manners":
+                                        case "politeness":
                                             foundUser.getmRatings().setMannersCOUNT(foundUser.getmRatings().getMannersCOUNT() + 1);
                                             foundUser.getmRatings().setMannersSUM(foundUser.getmRatings().getMannersCOUNT() + mRating.getRating());
 
@@ -212,23 +210,27 @@ public class MyRatingsFrag extends Fragment {
                                             searchUsers.child(newKey).child("mRatings").child("mannersCOUNT").setValue(manCOUNT);
                                             searchUsers.child(newKey).child("mRatings").child("mannersSUM").setValue(manSUM);
                                             searchUsers.child(newKey).child("mRatings").child("overAll").setValue(updatedOverall5);
-                                            searchUsers.child(newKey).child("mRatings").child(mSpinny.getSelectedItem().toString().toLowerCase()).setValue(manSUM / manCOUNT);
+                                            //changed from manners to politeness last minute.. so hardcoded in.
+                                            searchUsers.child(newKey).child("mRatings").child("manners").setValue(manSUM / manCOUNT);
                                             break;
                                         default:
                                             Toast.makeText(getContext(), "Select a Category", Toast.LENGTH_SHORT).show();
                                             break;
 
 
-
                                     }
                                     Toast.makeText(getContext(), "Rating Sent!", Toast.LENGTH_SHORT).show();
+                                    if (mRating.getRating() >= 2.5) {
+                                        mPositiveratingSound.start();
+                                    } else {
+                                        mNegativeratingSound.start();
+                                    }
                                 }
                             });
-
                             //reset textview
                         } else if (newText.equals("")) {
 
-                            mTexty.setText("Search Users");
+                            mTexty.setText("Rate A Friend!");
                         }
                     }
 

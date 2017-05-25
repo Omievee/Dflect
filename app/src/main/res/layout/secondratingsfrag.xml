@@ -1,6 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/backgrounds">
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/PROFILEPIC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/personalRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Rating:"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="42dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/OVERALLSCORE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_below="@+id/personalRating"
+        android:layout_centerHorizontal="true"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:layout_marginTop="27dp" />
+
+    <TextView
+        android:id="@+id/friendlySCORE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="53dp"
+        android:text=""
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/OVERALLSCORE"
+        android:layout_toStartOf="@+id/OVERALLSCORE" />
+
+    <TextView
+        android:id="@+id/friendlyDISPLAY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_alignBaseline="@+id/friendlySCORE"
+        android:layout_alignBottom="@+id/friendlySCORE"
+        android:layout_toEndOf="@+id/personalRating" />
+
+    <TextView
+        android:id="@+id/EngSCORE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_marginTop="45dp"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/friendlySCORE"
+        android:layout_alignStart="@+id/ProSCORE" />
+
+    <TextView
+        android:id="@+id/EndDISPLAY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_alignBaseline="@+id/EngSCORE"
+        android:layout_alignBottom="@+id/EngSCORE"
+        android:layout_alignStart="@+id/friendlyDISPLAY" />
+
+    <TextView
+        android:id="@+id/ProSCORE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_marginTop="45dp"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/EngSCORE"
+        android:layout_alignStart="@+id/friendlySCORE" />
+
+    <TextView
+        android:id="@+id/ProDISPLAY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_alignBaseline="@+id/ProSCORE"
+        android:layout_alignBottom="@+id/ProSCORE"
+        android:layout_alignStart="@+id/EndDISPLAY" />
+
+    <TextView
+        android:id="@+id/PreSCORE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_marginTop="52dp"
+        android:layout_below="@+id/ProSCORE"
+        android:layout_alignStart="@+id/ProSCORE" />
+
+    <TextView
+        android:id="@+id/PreDISPLAY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_alignBaseline="@+id/PreSCORE"
+        android:layout_alignBottom="@+id/PreSCORE"
+        android:layout_alignStart="@+id/ProDISPLAY" />
+
+    <TextView
+        android:id="@+id/PolSCORE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="59dp"
+        android:text="TextView"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/PreSCORE"
+        android:layout_alignStart="@+id/PreSCORE" />
+
+    <TextView
+        android:id="@+id/PolDISPLAY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_alignBaseline="@+id/PolSCORE"
+        android:layout_alignBottom="@+id/PolSCORE"
+        android:layout_alignStart="@+id/PreDISPLAY" />
+
+</RelativeLayout>

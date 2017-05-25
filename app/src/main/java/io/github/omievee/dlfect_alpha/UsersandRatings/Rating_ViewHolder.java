@@ -12,7 +12,7 @@ import io.github.omievee.dlfect_alpha.R;
  * Created by omievee on 5/16/17.
  */
 
-public class Rating_ViewHolder extends RecyclerView.ViewHolder  {
+public class Rating_ViewHolder extends RecyclerView.ViewHolder {
     public Button mTestButton;
     public RatingBar mRating;
     public TextView mTexty, mTexty2;
@@ -31,6 +31,5 @@ public class Rating_ViewHolder extends RecyclerView.ViewHolder  {
     }
 
 
-
-    }
+}
 

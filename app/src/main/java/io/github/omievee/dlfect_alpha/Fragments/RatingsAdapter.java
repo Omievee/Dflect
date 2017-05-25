@@ -20,7 +20,7 @@ public class RatingsAdapter extends FragmentPagerAdapter {
             case 0:
                 return MyRatingsFrag.newInstance();
             case 1:
-                return SecondRatingsFrag.newInstance();
+                return StatsFrag.newInstance();
             default:
                 return null;
         }

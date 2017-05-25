@@ -1,4 +1,4 @@
-package io.github.omievee.dlfect_alpha;
+package io.github.omievee.dlfect_alpha.SignIn_Main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 
 import io.github.omievee.dlfect_alpha.Fragments.RatingsAdapter;
+import io.github.omievee.dlfect_alpha.R;
 import io.github.omievee.dlfect_alpha.UsersandRatings.MyUsers;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
 
         ViewPager viewPager = (ViewPager) (findViewById(R.id.viewpager1));
 
@@ -53,8 +52,12 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tab = (TabLayout) findViewById(R.id.tablayout);
         tab.setupWithViewPager(viewPager);
+    }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }
 
