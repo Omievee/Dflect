@@ -83,10 +83,11 @@ public class MyRatingsFrag extends Fragment {
                 Toast.makeText(getContext(), "Find Someone to Rate!", Toast.LENGTH_SHORT).show();
             }
         });
-
+        //textbox always set to this before and after search compelte.
         mTexty.setText("Rate A Friend!");
         searchView();
 
+        //instantiating sound variables
         mPositiveratingSound = MediaPlayer.create(view.getContext(), R.raw.nosedive_4_stars);
         mNegativeratingSound = MediaPlayer.create(view.getContext(), R.raw.nosedive_1_star);
 
@@ -118,7 +119,7 @@ public class MyRatingsFrag extends Fragment {
             public void searchView_FireBaseSearch(final String newText) {
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                 final DatabaseReference searchUsers = database.getReference("users");
-                searchUsers.orderByChild("mEmail").equalTo(newText).addListenerForSingleValueEvent(new ValueEventListener() {
+                searchUsers.orderByChild("mEmail").equalTo(newText).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -221,6 +222,8 @@ public class MyRatingsFrag extends Fragment {
 
                                     }
                                     Toast.makeText(getContext(), "Rating Sent!", Toast.LENGTH_SHORT).show();
+
+                                    //positive & negative sounds played depending on rating given out..
                                     if (mRating.getRating() >= 2.5) {
                                         mPositiveratingSound.start();
                                     } else {
@@ -228,9 +231,23 @@ public class MyRatingsFrag extends Fragment {
                                     }
                                 }
                             });
+                            mSend.setOnLongClickListener(new View.OnLongClickListener() {
+                                @Override
+                                public boolean onLongClick(View v) {
+                                    //if you're feeling generous.. add .5 to their overall w/ a long click
+                                    MyUsers foundUser = dataSnapshot.child(newKey).getValue(MyUsers.class);
+                                    foundUser.getmRatings().setOverAll(foundUser.getmRatings().getOverAll());
+
+                                    searchUsers.child(newKey).child("mRatings").child("overAll").setValue(foundUser.getmRatings().getOverAll() + .50);
+                                    Toast.makeText(getContext(), "Super Rating!!", Toast.LENGTH_SHORT).show();
+                                    mPositiveratingSound.start();
+
+                                    return true;
+                                }
+                            });
                             //reset textview
                         } else if (newText.equals("")) {
-
+                            //reset textview
                             mTexty.setText("Rate A Friend!");
                         }
                     }
@@ -245,7 +262,6 @@ public class MyRatingsFrag extends Fragment {
         });
 
     }
-
 
 
 }

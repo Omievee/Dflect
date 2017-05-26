@@ -29,7 +29,6 @@ public class StatsFrag extends Fragment {
     TextView mPersonalRate, mOverAllScore, mFriend, mPro, mPre, mEng, mPOLITE;
     TextView mFtext, mProText, mPreText, mEngText, mPOL;
     FirebaseAuth mAuth;
-    ImageView mPic;
     SwipeRefreshLayout mREFRESHING;
 
     public StatsFrag() {
@@ -70,7 +69,7 @@ public class StatsFrag extends Fragment {
         mEngText = (TextView) view.findViewById(R.id.EngSCORE);
         mEngText.setText(R.string.currentENG);
 
-
+        //swipe to refresh display incase it doesnt auto update.
         mREFRESHING = (SwipeRefreshLayout) view.findViewById(R.id.SWIPEREFRESH);
         mREFRESHING.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -83,14 +82,12 @@ public class StatsFrag extends Fragment {
 
         displayPersonalStats();
 
-        mPic = (ImageView) view.findViewById(R.id.PROFILEPIC);
 
-        mPic.setImageURI(mAuth.getCurrentUser().getPhotoUrl());
 
         return view;
     }
 
-    //
+    //check current user, then go through firebase & get Ratings for the matching current user.
     public void displayPersonalStats() {
         mAuth = FirebaseAuth.getInstance();
 
@@ -99,7 +96,7 @@ public class StatsFrag extends Fragment {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference currentUSER = database.getReference("users");
 
-        currentUSER.orderByChild("mName").equalTo(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        currentUSER.orderByChild("mName").equalTo(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -122,6 +119,8 @@ public class StatsFrag extends Fragment {
                     double polite = dataSnapshot.child(key).getValue(MyUsers.class).getmRatings().getManners();
                     double pre = dataSnapshot.child(key).getValue(MyUsers.class).getmRatings().getPresentation();
 
+
+                    //set texts w/ proper ratings but formatted w/ 2 decimal points
                     mOverAllScore.setText(String.format("% .2f", overall));
                     mFriend.setText(String.format("% .2f", friendly));
                     mPro.setText(String.format("% .2f", pro));
