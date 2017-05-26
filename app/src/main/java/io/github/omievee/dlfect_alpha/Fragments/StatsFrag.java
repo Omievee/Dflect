@@ -119,6 +119,8 @@ public class StatsFrag extends Fragment {
                     double polite = dataSnapshot.child(key).getValue(MyUsers.class).getmRatings().getManners();
                     double pre = dataSnapshot.child(key).getValue(MyUsers.class).getmRatings().getPresentation();
 
+
+                    //set texts w/ proper ratings but formatted w/ 2 decimal points
                     mOverAllScore.setText(String.format("% .2f", overall));
                     mFriend.setText(String.format("% .2f", friendly));
                     mPro.setText(String.format("% .2f", pro));

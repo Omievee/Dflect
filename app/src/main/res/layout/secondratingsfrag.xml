@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     android:id="@+id/SWIPEREFRESH"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
@@ -45,8 +45,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/OVERALLSCORE"
             android:layout_marginTop="53dp"
+            android:paddingLeft="20dp"
             android:text="Loading..."
-            android:textSize="15sp"
+
+            android:textSize="25sp"
             android:textStyle="italic" />
 
         <TextView
@@ -57,7 +59,7 @@
             android:layout_alignBottom="@+id/friendlySCORE"
             android:layout_toEndOf="@+id/personalRating"
             android:text="Loading..."
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="italic" />
 
         <TextView
@@ -67,19 +69,21 @@
             android:layout_alignStart="@+id/ProSCORE"
             android:layout_below="@+id/friendlySCORE"
             android:layout_marginTop="45dp"
+            android:paddingLeft="20dp"
             android:text="Loading..."
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="italic" />
 
         <TextView
             android:id="@+id/EndDISPLAY"
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/EngSCORE"
             android:layout_alignBottom="@+id/EngSCORE"
             android:layout_alignStart="@+id/friendlyDISPLAY"
             android:text="Loading..."
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="italic" />
 
         <TextView
@@ -89,8 +93,10 @@
             android:layout_alignStart="@+id/friendlySCORE"
             android:layout_below="@+id/EngSCORE"
             android:layout_marginTop="45dp"
+            android:paddingLeft="20dp"
             android:text="Loading..."
-            android:textSize="15sp"
+            android:textSize="20sp"
+
             android:textStyle="italic" />
 
         <TextView
@@ -101,18 +107,20 @@
             android:layout_alignBottom="@+id/ProSCORE"
             android:layout_alignStart="@+id/EndDISPLAY"
             android:text="Loading..."
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="italic" />
 
         <TextView
             android:id="@+id/PreSCORE"
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/ProSCORE"
             android:layout_below="@+id/ProSCORE"
             android:layout_marginTop="52dp"
+            android:paddingLeft="20dp"
             android:text="Loading..."
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="italic" />
 
         <TextView
@@ -123,18 +131,20 @@
             android:layout_alignBottom="@+id/PreSCORE"
             android:layout_alignStart="@+id/ProDISPLAY"
             android:text="Loading..."
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="italic" />
 
         <TextView
             android:id="@+id/PolSCORE"
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/PreSCORE"
             android:layout_below="@+id/PreSCORE"
             android:layout_marginTop="59dp"
+            android:paddingLeft="20dp"
             android:text="Loading..."
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="italic" />
 
         <TextView
@@ -145,7 +155,7 @@
             android:layout_alignBottom="@+id/PolSCORE"
             android:layout_alignStart="@+id/PreDISPLAY"
             android:text="Loading..."
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="italic" />
 
     </RelativeLayout>
