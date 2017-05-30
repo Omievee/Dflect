@@ -1,6 +1,8 @@
 # Efkt.
 First Google Play Store app.
 
+<a href='https://play.google.com/store/apps/details?id=io.github.omievee.dlfect_alpha&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+
 
 This app is a take on on the Black Mirror Episode "Nosedive" in which people are rated via an app on their phone. This rating is the rule all when it comes to who you are, and everyone you interact with. The higher your score on the app, the better you are percieved and essentially the better life you will have, everything from work, to friends, and the things you buy all reflect your score.
 
